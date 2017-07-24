@@ -11,22 +11,25 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
-	
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	DataSource dataSource;
 
 	@Autowired
 	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-	  auth.jdbcAuthentication().dataSource(dataSource)
-		.usersByUsernameQuery("SELECT username, password FROM users WHERE username=?");
+		auth.jdbcAuthentication().dataSource(dataSource)
+		.usersByUsernameQuery("SELECT username, password, 'true' as enabled FROM users WHERE username=?")
+		.authoritiesByUsernameQuery("SELECT username, authority FROM authorities WHERE username = ?  ");
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-            .antMatchers("/", "/CountMeUp").permitAll()
-            .anyRequest().authenticated();
+		.antMatchers("/login").permitAll()
+		.anyRequest().authenticated().and()
+		.formLogin().loginPage("/login").permitAll().and()
+		.logout().permitAll();
 	}
-	
+
 }
