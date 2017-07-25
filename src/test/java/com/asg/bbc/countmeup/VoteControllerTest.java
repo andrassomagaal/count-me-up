@@ -14,13 +14,16 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class VoteControllerTest extends TestBase {
 
 	private static final String USER = "user";
@@ -45,7 +48,7 @@ public class VoteControllerTest extends TestBase {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void countMeUpEmptyTest() throws Exception {
+	public void countMeUpAccessTest() throws Exception {
 		mockMvc.perform(get("/CountMeUp")).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk());
 	}
@@ -131,12 +134,18 @@ public class VoteControllerTest extends TestBase {
 	}
 
 	/**
-	 * Send votes evenly distributed from candidatePostFixFrom to candidatePostFixTo
-	 * @param voteCount The summary of votes to be send
-	 * @param candidatePostFixFrom The postFix of the candidate to start from
-	 * @param candidatePostFixTo The postFix of the last candidate to vote for
+	 * Send votes evenly distributed from candidatePostFixFrom to
+	 * candidatePostFixTo
+	 * 
+	 * @param voteCount
+	 *            The summary of votes to be send
+	 * @param candidatePostFixFrom
+	 *            The postFix of the candidate to start from
+	 * @param candidatePostFixTo
+	 *            The postFix of the last candidate to vote for
 	 */
-	private void sendEvenlyDistributedVotes(int voteCount, int candidatePostFixFrom, int candidatePostFixTo) throws Exception {
+	private void sendEvenlyDistributedVotes(int voteCount, int candidatePostFixFrom, int candidatePostFixTo)
+			throws Exception {
 		int userPostFix = userPostfix.getAndIncrement();
 		String candidate = "candidate-";
 		int votePerUser = 0;
