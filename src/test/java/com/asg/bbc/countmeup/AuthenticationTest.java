@@ -12,12 +12,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class AuthenticationTest extends TestBase {
 
 	@Before
 	public void setup() {
-		jdbcTemplate.update(INSERT_DEFAULT_USER, "user", "password");
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		jdbcTemplate.update(INSERT_DEFAULT_USER, "user", encoder.encode("password"));
 		jdbcTemplate.update(INSERT_DEFAULT_AUTHORITY, "user", "ROLE_USER");
 	}
 
