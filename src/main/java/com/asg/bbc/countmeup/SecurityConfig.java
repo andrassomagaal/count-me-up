@@ -20,13 +20,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 		auth.jdbcAuthentication().dataSource(dataSource)
 		.usersByUsernameQuery("SELECT username, password, 'true' as enabled FROM users WHERE username=?")
-		.authoritiesByUsernameQuery("SELECT username, authority FROM authorities WHERE username = ?  ");
+		.authoritiesByUsernameQuery("SELECT username, authority FROM authorities WHERE username=?");
 	}
 
+	/**
+	 * Enable authentication to all URL except login/logout </br>
+	 * CountMeUp requires ADMIN role 
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-		.antMatchers("/login").permitAll()
+		http
+		.csrf().disable()
+		.authorizeRequests()
+		.antMatchers("/CountMeUp").hasRole("ADMIN")
 		.anyRequest().authenticated().and()
 		.formLogin().loginPage("/login").permitAll().and()
 		.logout().permitAll();

@@ -5,3 +5,6 @@
 
 # maven target folder
 target/
+
+# spring
+.springBeans
