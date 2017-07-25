@@ -18,10 +18,11 @@ public class DataBaseConfig {
 	 * the embedded DB only in tests
 	 */
 	@Bean
-//	@Profile("dev")
+	// @Profile("dev")
 	public DataSource dataSource() {
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-		EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.H2).build();
+		EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.H2).addScript("db/schema.sql")
+				.addScript("db/data.sql").build();
 		return db;
 	}
 
